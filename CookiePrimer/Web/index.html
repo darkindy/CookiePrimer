@@ -1,59 +1,61 @@
 <html>
-	<head>
-		<script src="jquery.min.js"></script>
-		<script type="text/javascript">
-			var $rootUrl = "http://192.168.100.2:8083";
-			$(document).ready(function() {
-				$("#login-button").click(function() {
-					$.ajax({
-						url : $rootUrl + '/controller/login.php',
-						type : 'GET',
-						dataType:'json',
-						success : function(data) {              
-							$("#login-message").html(data.message);
-						},
-						error : function(request,error)
-						{
-							$("#login-message").html("ERROR DURING LOGIN");
-						}
-					});
-				});
-				$("#protected-button").click(function() {
-					$.ajax({
-						url : $rootUrl + '/controller/protected.php',
-						type : 'GET',
-						dataType:'json',
-						
-						success : function(data) {              
-							$("#protected-message").html(data.message);
-						},
-						error : function(request,error)
-						{
-							$("#protected-message").html("ERROR DURING FETCHING PROTECTED MESSAGE :" + error);
-						}
-					});
-				});
-				$("#clear-button").click(function() {
-					$("#login-message").html("");
-					$("#protected-message").html("");
-				});
-			});
-		</script>
-	</head>
-	<body>
-		<h1>TESTING COOKIES</h1>
-		<div style="border:1px solid black">
-			<button id="login-button" type="submit">Log in</button>
-			<h4>Login message below</h4>
-			<div style="border:1px solid blue; min-height:40pt" id="login-message"></div>
-		</div>
-		<br/>
-		<div style="border:1px solid black">
-			<button id="protected-button" type="submit">Get protected message</button>
-			<h4>Protected message below</h4>
-			<div style="border:1px solid red; min-height:40pt" id="protected-message"></div>
-		</div>
-		<br/>
-		<button id="clear-button" type="submit">Clear all</button>
-	</body>
+    <head>
+        <script src="jquery.min.js"></script>
+        <script type="text/javascript">
+            /* Write API URL prefixed with http://localhost:8884/CORS/ to bypass CORS and cookie Same-Site restrictions */
+            var $apiUrl = "http://localhost:8884/CORS/http://192.168.100.2:8083";
+            
+            $(document).ready(function() {
+                $("#login-button").click(function() {
+                    $.ajax({
+                        url : $apiUrl + '/controller/login.php',
+                        type : 'GET',
+                        dataType:'json',
+                        success : function(data) {
+                            $("#login-message").html(data.message);
+                        },
+                        error : function(request,error)
+                        {
+                            $("#login-message").html("ERROR DURING LOGIN");
+                        }
+                    });
+                });
+                $("#protected-button").click(function() {
+                    $.ajax({
+                        url : $apiUrl + '/controller/protected.php',
+                        type : 'GET',
+                        dataType:'json',
+                        
+                        success : function(data) {
+                            $("#protected-message").html(data.message);
+                        },
+                        error : function(request,error)
+                        {
+                            $("#protected-message").html("ERROR DURING FETCHING PROTECTED MESSAGE :" + error);
+                        }
+                    });
+                });
+                $("#clear-button").click(function() {
+                    $("#login-message").html("");
+                    $("#protected-message").html("");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h1>TESTING COOKIES</h1>
+        <div style="border:1px solid black">
+            <button id="login-button" type="submit">Log in</button>
+            <h4>Login message below</h4>
+            <div style="border:1px solid blue; min-height:40pt" id="login-message"></div>
+        </div>
+        <br/>
+        <div style="border:1px solid black">
+            <button id="protected-button" type="submit">Get protected message</button>
+            <h4>Protected message below</h4>
+            <div style="border:1px solid red; min-height:40pt" id="protected-message"></div>
+        </div>
+        <br/>
+        <button id="clear-button" type="submit">Clear all</button>
+    </body>
 </html>

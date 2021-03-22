@@ -1,9 +1,9 @@
 //
-//  ViewController.swift
-//  Demo Swift Hello World
+//  WebViewController.swift
+//  CookiePrimer
 //
-//  Created by Joel on 9/27/17.
-//  Copyright © 2017 JoelParkerHenderson.com. All rights reserved.
+//  Created by Andrei Pietrusel on 3/21/21.
+//  Copyright © 2021 Andrei Pietrusel (Darkindy). All rights reserved.
 //
 import UIKit
 import WebKit
@@ -14,80 +14,40 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     var webServer: GCDWebServer?
     
     override func loadView() {
-        Swift.print("Loading view")
         webView = WKWebView()
-        //webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         webView.navigationDelegate = self
+        //webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         view = webView
     }
     
     override func viewDidLoad() {
-             Swift.print("Loaded view")
         super.viewDidLoad()
         initWebServer()
-        //let url = URL(string: "l")!
-        //webView.load(URLRequest(url: url))
-        
-//        let path = Bundle.main.path(forResource: "index", ofType: "html")
-//        let url = URL(fileURLWithPath: path!)
-//
-//        print("URL \(url.absoluteString)")
-//
-//        webView.loadFileURL(url, allowingReadAccessTo: url)
-//        let request = URLRequest(url: url)
-//        webView.load(request)
-//
-//        webView.allowsBackForwardNavigationGestures = true
         loadDefaultIndexFile()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     private func loadDefaultIndexFile() {
-
-        
-        
-        //print("HTML base folder Path: \(folderPath)")
-
-        let url = webServer!.serverURL!
-        print("Serving local pages from \(url)")
-        let request = URLRequest(url: url)
+        let rootUrl = webServer!.serverURL!
+        print("Serving index page from \(rootUrl)")
+        let request = URLRequest(url: rootUrl)
         self.webView.load(request)
     }
     
-      func initWebServer() {
-
-        
+    func initWebServer() {
         webServer = GCDWebServer()
         
+        let folderPath = Bundle.main.path(forResource: "Web", ofType: nil)
+        self.webServer!.addGETHandler(forBasePath: "/",
+                                      directoryPath: folderPath!,
+                                      indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
         
-
-                guard let folderPath = Bundle.main.path(forResource: "Web", ofType: nil) else {
-            print("eroare la path")
-            return
-        }
-        
-        let fileURL = URL(fileURLWithPath:folderPath)
-        if let _ = try? fileURL.checkResourceIsReachable()  {
-           print("file exists")
-        } else {
-            print("file does not exist")
-        }
-        
-                self.webServer!.addGETHandler(forBasePath: "/",
-                                                directoryPath: folderPath,
-                                                indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
+        let _ = CorsProxy(webserver: webServer!, urlPrefix: "/CORS/")
         
         let options: [String: Any] = [
-            GCDWebServerOption_BindToLocalhost: true,
-            GCDWebServerOption_Port: 8084
+            GCDWebServerOption_Port: 8884,
+            GCDWebServerOption_BindToLocalhost: true
         ]
-        
         try? webServer!.start(options: options)
-
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -97,27 +57,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
                 return
             }
         }
-
+        
         decisionHandler(.cancel)
     }
     
-//    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-//
-//
-//
-//      guard let response = navigationResponse.response as? HTTPURLResponse,
-//        let url = navigationResponse.response.url else {
-//        decisionHandler(.cancel)
-//        return
-//      }
-//
-//      if let headerFields = response.allHeaderFields as? [String: String] {
-//        let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
-//        cookies.forEach { cookie in
-//          webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
-//        }
-//      }
-//
-//      decisionHandler(.allow)
-//    }
 }

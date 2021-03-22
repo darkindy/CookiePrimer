@@ -10,6 +10,8 @@
 #define CookiePrimer_Bridging_Header_h
 
 #import "GCDWebServer/Core/GCDWebServer.h"
+#import "GCDWebServer/Requests/GCDWebServerDataRequest.h"
+#import "GCDWebServer/Responses/GCDWebServerDataResponse.h"
 
 
 #endif /* CookiePrimer_Bridging_Header_h */
